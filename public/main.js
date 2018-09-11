@@ -414,6 +414,9 @@ var SigninComponent = /** @class */ (function () {
         this.authService.signinUser(email, password);
         console.log('Passed email and password to Auth.Service');
     };
+    SigninComponent.prototype.hasWrongCredentials = function () {
+        return false; // TODO
+    };
     SigninComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-signin',
@@ -447,7 +450,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Sign Up</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignup(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input type=\"email\" id=\"email\" name=\"email\" ngModel class=\"form-control\" placeholder=\"Email\" email required #email=\"ngModel\">\n                <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                    Please enter a valid email!\n                </span>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"name\">Name</label>\n            <div class=\"col-sm-12\">\n                <input type=\"text\" id=\"name\" name=\"name\" ngModel class=\"form-control\" placeholder=\"Name\">\n            </div>\n        </div>\n        <span class=\"col-sm-3 help-block\" *ngIf=\"hasWrongCredentials()\">\n            Oops, wrong credentials!\n        </span>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\" id=\"password\" name=\"password\" ngModel class=\"form-control\" placeholder=\"Password\">\n            </div>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!f.valid\">Sign Up</button>\n            </div>\n        </div>\n    </form>\n</div>"
+module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Sign Up</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignup(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input type=\"email\" id=\"email\" name=\"email\" ngModel class=\"form-control\" placeholder=\"Email\" email required #email=\"ngModel\">\n                <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                    Please enter a valid email!\n                </span>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"name\">Name</label>\n            <div class=\"col-sm-12\">\n                <input type=\"text\" id=\"name\" name=\"name\" ngModel class=\"form-control\" placeholder=\"Name\">\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\" id=\"password\" name=\"password\" ngModel class=\"form-control\" placeholder=\"Password\">\n            </div>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!f.valid\">Sign Up</button>\n            </div>\n        </div>\n    </form>\n</div>"
 
 /***/ }),
 
@@ -485,8 +488,6 @@ var SignupComponent = /** @class */ (function () {
         var password = form.value.password;
         var name = form.value.name;
         this.authService.signupUser(email, password, name);
-    };
-    SignupComponent.prototype.hasWrongCredentials = function () {
     };
     SignupComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
