@@ -285,9 +285,9 @@ var AuthService = /** @class */ (function () {
         this.router = router;
         this.http = http;
         this.hasLoggedIn = false;
-        this.apiUrl = 'http://simple-chat-app-bookboost.herokuapp.com/api';
-        this.usersUrl = 'http://simple-chat-app-bookboost.herokuapp.com/api/users';
-        this.authUrl = 'http://simple-chat-app-bookboost.herokuapp.com/api/authenticate';
+        this.apiUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api';
+        this.usersUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api/users';
+        this.authUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api/authenticate';
         this.token = '';
     }
     AuthService.prototype.ngOnInit = function () {

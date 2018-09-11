@@ -162,7 +162,6 @@ class MessagesController extends Controller
 
     }
 
-
         /**
      * Store a newly created resource in storage.
      *
@@ -197,37 +196,4 @@ class MessagesController extends Controller
         ]);
 
     }
-    // /*  Transformation functions */
-    // private function transformCollection($messages)
-    // {
-    //     $messagesArray = $messages->toArray();
-    //     // return $messagesArray;
-    //     return [
-    //         'total' => $messagesArray['total'],
-    //         'per_page' => intval($messagesArray['per_page']),
-    //         'current_page' => $messagesArray['current_page'],
-    //         'last_page' => $messagesArray['last_page'],
-    //         'next_page_url' => $messagesArray['next_page_url'],
-    //         'prev_page_url' => $messagesArray['prev_page_url'],
-    //         'msg_nr_start' => $messagesArray['from'],
-    //         'msg_nr_stop' => $messagesArray['to'],
-    //         'data' => array_map([$this, 'transform'], $messagesArray['data'])
-    //     ];
-    // }
-
-    // private function transform($message)
-    // {
-    //     $receiver_user = User::find($message['receiver_id']);
-    //     $receiver_name = $receiver_user['name'];
-
-    //     return [
-    //         'id' => $message['id'],
-    //         'content' => $message['content'],
-    //         'sender_id' => $message['user_id'],
-    //         'sender_name' => $message['user']['name'],
-    //         'receiver_id' => $message['receiver_id'],
-    //         'receiver_name' => $receiver_name
-    //     ];
-    // }
-
 }
