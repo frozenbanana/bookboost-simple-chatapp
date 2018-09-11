@@ -25,7 +25,7 @@ class AuthenticateController extends Controller
             // something went wrong (internal server error)
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        $loggedInUser = User::where('email', $request->email)->first();
+        $loggedInUser = User::where('email', $credientials['email'])->first();
         $id = $loggedInUser['id'];
         return response()->json(compact('token', 'id'));
     }
