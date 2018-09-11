@@ -292,11 +292,13 @@ var AuthService = /** @class */ (function () {
     }
     AuthService.prototype.ngOnInit = function () {
     };
+    AuthService.prototype.ngOnDestroy = function () {
+        this.signupSubscribtion.unsubscribe();
+    };
     AuthService.prototype.signupUser = function (email, password, name) {
         var _this = this;
         var signupBody = { email: email, password: password, name: name };
-        this.sendCredentials(signupBody).subscribe(function (user) {
-            // console.log(data);
+        this.signupSubscribtion = this.sendCredentials(signupBody).subscribe(function (user) {
             _this.token = user['token'];
             _this.activeUserId = user['id'];
             _this.hasLoggedIn = true;
@@ -559,7 +561,6 @@ var ChatComponent = /** @class */ (function () {
     function ChatComponent(msgService, authService) {
         this.msgService = msgService;
         this.authService = authService;
-        // messages: Message[] = [];
         this.conversation = [];
         this.users = [];
         this.user_id = -1;
@@ -570,6 +571,12 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.user_id = this.msgService.getActiveUserId();
+        // Check for new  messages
+        this.updateInterval = setInterval(function () {
+            if (_this.receiver_id !== 0) {
+                _this.updateConversation();
+            }
+        }, 4000);
         // Init Users
         this.userSubscription = this.msgService.getUsers()
             .subscribe(function (users) {
@@ -624,6 +631,7 @@ var ChatComponent = /** @class */ (function () {
     };
     // Logout
     ChatComponent.prototype.onLogout = function () {
+        clearInterval(this.updateInterval);
         this.authService.logout();
     };
     // Used in template to add sender in every message
@@ -720,7 +728,6 @@ var MessageService = /** @class */ (function () {
         conversationUrl += "?token=" + this.token;
         return this.http.get(conversationUrl)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
-            console.log(response.json());
             console.log(response.json().conversation.data);
             return response.json().conversation.data;
         }));
