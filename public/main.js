@@ -295,11 +295,10 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.signupUser = function (email, password, name) {
         var _this = this;
         var signupBody = { email: email, password: password, name: name };
-        this.sendCredentials(signupBody).subscribe(function (data) {
+        this.sendCredentials(signupBody).subscribe(function (user) {
             // console.log(data);
-            _this.token = data['token'];
-            _this.activeUserId = data['id'];
-            // console.log(this.token);
+            _this.token = user['token'];
+            _this.activeUserId = user['id'];
             _this.hasLoggedIn = true;
             _this.router.navigate(['/chat']);
         }, function (error) {
@@ -328,17 +327,20 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.signinUser = function (email, password) {
         var _this = this;
         var signinBody = { email: email, password: password };
-        this.getToken(signinBody).subscribe(function (data) {
-            // console.log(data);
-            _this.token = data['token'];
-            _this.activeUserId = data['id'];
+        this.getToken(signinBody).subscribe(function (user) {
+            _this.token = user['token'];
+            _this.activeUserId = user['id'];
+            console.log('comming straight from the api: ', _this.activeUserId);
             _this.hasLoggedIn = true;
             _this.router.navigate(['/chat']);
         });
     };
     AuthService.prototype.logout = function () {
         console.log('User logged out!');
+        this.token = '';
+        this.activeUserId = -1;
         this.hasLoggedIn = false;
+        this.router.navigate(['/signin']);
     };
     AuthService.prototype.isAuthenticated = function () {
         return this.hasLoggedIn;
@@ -373,7 +375,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Login</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignin(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"email\"\n                id=\"email\"\n                name=\"email\"\n                ngModel class=\"form-control\"\n                placeholder=\"Email\"\n                email\n                required\n                #email=\"ngModel\">\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                Please enter a valid email!\n            </span>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\"\n                id=\"password\"\n                name=\"password\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Password\"\n                required>\n            </div>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"f.form.invalid\">Sign In</button>\n                <small class=\"float-right\">Or click <a  class=\"text-right\" [routerLink]=\"['/signup']\">here </a> to register</small>\n            </div>\n        </div>\n    </form>\n</div>"
+module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Login</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignin(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"email\"\n                id=\"email\"\n                name=\"email\"\n                ngModel class=\"form-control\"\n                placeholder=\"Email\"\n                email\n                required\n                #email=\"ngModel\">\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                Please enter a valid email!\n            </span>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\"\n                id=\"password\"\n                name=\"password\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Password\"\n                required>\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"hasWrongCredentials()\">\n                Oops, wrong credentials!\n            </span>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"f.form.invalid\">Sign In</button>\n                <small class=\"float-right\">Or click <a  class=\"text-right\" [routerLink]=\"['/signup']\">here </a> to register</small>\n            </div>\n        </div>\n    </form>\n</div>"
 
 /***/ }),
 
@@ -445,7 +447,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Sign Up</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignup(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"email\"\n                id=\"email\"\n                name=\"email\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Email\"\n                email\n                required\n                #email=\"ngModel\">\n                <span class=\"help-block\" *ngIf=\"!email.valid && email.touched\">\n                    Please enter a valid email!\n                </span>\n                <!-- <input type=\"email\" id=\"email\" name=\"email\" ngModel class=\"form-control\" placeholder=\"Email\"> -->\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"name\">Name</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"text\"\n                id=\"name\"\n                name=\"name\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Name\">\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\" id=\"password\" name=\"password\" ngModel class=\"form-control\" placeholder=\"Password\">\n            </div>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!f.valid\">Sign Up</button>\n            </div>\n        </div>\n    </form>\n</div>"
+module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Sign Up</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignup(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input type=\"email\" id=\"email\" name=\"email\" ngModel class=\"form-control\" placeholder=\"Email\" email required #email=\"ngModel\">\n                <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                    Please enter a valid email!\n                </span>\n            </div>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"name\">Name</label>\n            <div class=\"col-sm-12\">\n                <input type=\"text\" id=\"name\" name=\"name\" ngModel class=\"form-control\" placeholder=\"Name\">\n            </div>\n        </div>\n        <span class=\"col-sm-3 help-block\" *ngIf=\"hasWrongCredentials()\">\n            Oops, wrong credentials!\n        </span>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\" id=\"password\" name=\"password\" ngModel class=\"form-control\" placeholder=\"Password\">\n            </div>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"!f.valid\">Sign Up</button>\n            </div>\n        </div>\n    </form>\n</div>"
 
 /***/ }),
 
@@ -484,6 +486,8 @@ var SignupComponent = /** @class */ (function () {
         var name = form.value.name;
         this.authService.signupUser(email, password, name);
     };
+    SignupComponent.prototype.hasWrongCredentials = function () {
+    };
     SignupComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             selector: 'app-signup',
@@ -506,7 +510,7 @@ var SignupComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    background-color: #eeeeeb;\n    border-style: solid;\n    border-width: 2px;\n    border-color: #cacac6;\n    margin-top: 10px;\n}\n\n#title {\n    text-align:center;\n    margin-top:10px;\n}\n\n#chatlog {\n    background: #e5e5e5;\n    height:50vh;\n    overflow: scroll;\n    overflow-x:hidden;\n    display: flex;\n    border-style: solid;\n    border-width: 2px;\n    border-color: #cacac6;\n}\n\n.messages {\n  background: white;\n  padding: 5px;\n  padding-bottom: 0px;\n  border-radius: 2px;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);\n  max-width: 80%;\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.messages > p {\n  font-size: 11px;\n}\n\n.msg_sent {\n\n   margin-right: 0;\n   margin-left: auto;\n}\n\n.msg_receive {\n    padding-left: 0;\n    margin-right: auto;\n}\n\n.timestamp {\n    color: #c0c0c0;\n    font-size: 60%;\n}"
+module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    background-color: #eeeeeb;\n    border-style: solid;\n    border-width: 2px;\n    border-color: #cacac6;\n    margin-top: 10px;\n}\n\n#title {\n    text-align:center;\n    margin-top:10px;\n    margin-left:165px;\n}\n\n#chatlog {\n    background: #e5e5e5;\n    height:50vh;\n    overflow: scroll;\n    overflow-x:hidden;\n    display: flex;\n    border-style: solid;\n    border-width: 2px;\n    border-color: #cacac6;\n}\n\n.logout {\n    margin-top: 10px;\n    margin-left: 50px;\n}\n\n.messages {\n  background: white;\n  padding: 5px;\n  padding-bottom: 0px;\n  border-radius: 2px;\n  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);\n  max-width: 80%;\n  margin-top: 5px;\n  margin-bottom: 5px;\n}\n\n.messages > p {\n  font-size: 11px;\n}\n\n.msg_sent {\n\n   margin-right: 0;\n   margin-left: auto;\n}\n\n.msg_receive {\n    padding-left: 0;\n    margin-right: auto;\n}\n\n.timestamp {\n    color: #c0c0c0;\n    font-size: 60%;\n}"
 
 /***/ }),
 
@@ -517,7 +521,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"container\"> -->\n<div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n    <h3 id=\"title\">Chat</h3>\n    <hr>\n    <select\n    #receiverSelect\n    (change)=\"onSelectChange($event)\"\n    ([ngModel])=\"reciever_id\"\n    name=\"reciever\"\n    class=\"form-control\">\n        <option *ngFor=\"let user of users\" [ngValue]=\"user.id\">{{ user.email }}</option>\n    </select>\n    <br>\n    <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n        <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n            <div class=\"row messages\"\n            [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\"\n             *ngFor=\"let message of conversation\">\n                <p> {{ message.content }}  <br> <span class=\"timestamp\">Sent: {{message.created_at}}</span></p>\n            </div>\n        </div>\n    </div>\n    <br>\n    <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <div class=\"row\">\n                <div class=\"col-md-9\">\n                    <input\n                    type=\"text\"\n                    class=\"form-control\"\n                    name=\"message\"\n                    ngModel [value]=\"message\"\n                    required>\n                </div>\n                <div class=\"col-md-3 float-right\">\n                    <button class=\"btn btn-primary float-center\" type=\"submit\">Send</button>\n                </div>\n            </div>\n        </div>\n    </form>\n</div>\n<!-- </div> -->"
+module.exports = "<!-- <div class=\"container\"> -->\n<div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n    <div class=\"row\">\n        <h3 id=\"title\">Chat</h3>\n        <div class=\"col-md-2 float-right\">\n            <button class=\"btn btn-danger logout\" (click)=\"onLogout()\">Log Out</button>\n        </div>\n    </div>\n    <hr>\n    <select #receiverSelect (change)=\"onSelectChange($event)\" ([ngModel])=\"reciever_id\" name=\"reciever\" class=\"form-control\">\n        <option *ngFor=\"let user of users\" value=\"{{user.id}}\">{{ user.name }} ({{user.email}})</option>\n    </select>\n    <br>\n    <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n        <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n            <div class=\"row messages\" [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\" *ngFor=\"let message of conversation\">\n                <p> {{ message.content }} <br> <span class=\"timestamp\">Sent: {{message.created_at}} by {{decideSender(message.user_id)}}</span></p>\n            </div>\n        </div>\n    </div>\n    <br>\n    <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <div class=\"row\">\n                <div class=\"col-md-9\">\n                    <input type=\"text\" class=\"form-control\" name=\"message\" ngModel [value]=\"message\" required>\n                </div>\n                <div class=\"col-md-3 float-right\">\n                    <button class=\"btn btn-primary float-center\" type=\"submit\">Send</button>\n                </div>\n            </div>\n        </div>\n    </form>\n</div>\n<!-- </div> -->"
 
 /***/ }),
 
@@ -535,6 +539,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _shared_message_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../shared/message.model */ "./src/app/shared/message.model.ts");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm5/forms.js");
 /* harmony import */ var _message_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./message.service */ "./src/app/chat/message.service.ts");
+/* harmony import */ var _auth_auth_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../auth/auth.service */ "./src/app/auth/auth.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -548,36 +553,40 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var ChatComponent = /** @class */ (function () {
-    function ChatComponent(msgService) {
+    function ChatComponent(msgService, authService) {
         this.msgService = msgService;
-        this.messages = [];
+        this.authService = authService;
+        // messages: Message[] = [];
         this.conversation = [];
         this.users = [];
+        this.user_id = -1;
         this.user_name = 'Me';
         this.receiver_id = 0;
+        this.receiver_name = '';
     }
-    ChatComponent.prototype.ngOnChanges = function () {
-    };
     ChatComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.user_id = this.msgService.getActiveUser();
-        // init user
-        this.msgService.getUsers()
+        this.user_id = this.msgService.getActiveUserId();
+        // Init Users
+        this.userSubscription = this.msgService.getUsers()
             .subscribe(function (users) {
             _this.users = users;
             _this.users = _this.users.filter(function (userEl) { return userEl['id'] !== _this.user_id; }); // removing active user
             console.log('getting users from subscribtion', _this.users);
+            console.log('active user is: ', _this.user_id);
             _this.receiver_id = _this.users[0]['id'];
             _this.updateConversation();
         }, function (error) {
             console.log(error);
         });
     };
+    // When user hits send
     ChatComponent.prototype.onSend = function () {
         var _this = this;
         var newMessage = new _shared_message_model__WEBPACK_IMPORTED_MODULE_1__["Message"](0, this.user_id, this.receiver_id, this.messageForm.value.message, new Date().toString());
-        this.messages.push(newMessage);
+        // this.messages.push(newMessage);
         this.conversation.push(newMessage);
         this.msgService.saveMessage({
             user_id: this.user_id,
@@ -590,25 +599,45 @@ var ChatComponent = /** @class */ (function () {
         });
         this.messageForm.reset();
     };
+    // Update chat log depending on whom is selected
     ChatComponent.prototype.updateConversation = function () {
         var _this = this;
-        this.msgService.getConversation(this.receiver_id)
+        this.convSubscription = this.msgService.getConversation(this.receiver_id)
             .subscribe(function (conversationData) {
-            console.log('trying to get conversation');
             _this.conversation = conversationData;
-            // this.scrollChatDown();
         });
     };
+    // Helper function to scroll down after new message
     ChatComponent.prototype.scrollChatDown = function () {
         var objDiv = document.getElementById('chatlog');
         objDiv.scrollTop = objDiv.scrollHeight;
-        console.log(objDiv.scrollHeight);
     };
+    // Change chat log and update whom is active reciever
     ChatComponent.prototype.onSelectChange = function (event) {
-        var receiver_email = event.target.value; // temp solution. prefer get id straight away from event.
-        var user = this.users.filter(function (userEl) { return userEl['email'] === receiver_email; });
-        this.receiver_id = user[0]['id'];
+        var _this = this;
+        this.receiver_id = +event.target.value;
+        var selectedUsers = this.users.find(function (user) { return user['id'] === _this.receiver_id; });
+        console.log(selectedUsers);
+        this.receiver_name = selectedUsers['name'];
         this.updateConversation();
+    };
+    // Logout
+    ChatComponent.prototype.onLogout = function () {
+        this.authService.logout();
+    };
+    // Used in template to add sender in every message
+    ChatComponent.prototype.decideSender = function (id) {
+        if (id === this.user_id) {
+            return this.user_name;
+        }
+        else {
+            return this.receiver_name;
+        }
+    };
+    // Destroy our subscribtions
+    ChatComponent.prototype.ngOnDestroy = function () {
+        this.userSubscription.unsubscribe();
+        this.convSubscription.unsubscribe();
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('f'),
@@ -621,7 +650,8 @@ var ChatComponent = /** @class */ (function () {
             styles: [__webpack_require__(/*! ./chat.component.css */ "./src/app/chat/chat.component.css")]
         }),
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
-        __metadata("design:paramtypes", [_message_service__WEBPACK_IMPORTED_MODULE_3__["MessageService"]])
+        __metadata("design:paramtypes", [_message_service__WEBPACK_IMPORTED_MODULE_3__["MessageService"],
+            _auth_auth_service__WEBPACK_IMPORTED_MODULE_4__["AuthService"]])
     ], ChatComponent);
     return ChatComponent;
 }());
@@ -667,10 +697,10 @@ var MessageService = /** @class */ (function () {
         console.log(this.activeUserId);
         console.log('MessageService has been created with api url: ', this.apiUrl);
     }
-    MessageService.prototype.setActiveUser = function (id) {
+    MessageService.prototype.setActiveUserId = function (id) {
         this.activeUserId = id; // is set by auth Service when logging in.
     };
-    MessageService.prototype.getActiveUser = function () {
+    MessageService.prototype.getActiveUserId = function () {
         return this.activeUserId;
     };
     MessageService.prototype.getMessages = function () {
