@@ -567,12 +567,10 @@ var ChatComponent = /** @class */ (function () {
         this.user_name = 'Me';
         this.receiver_id = 0;
         this.receiver_name = '';
-        this.current_page_nr = -1;
-        this.trigger_next_page = 19;
+        this.current_page_nr = 1;
     }
     ChatComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.user_id = this.msgService.getActiveUserId();
         // Check for new  messages
         this.updateInterval = setInterval(function () {
             if (_this.receiver_id !== 0) {
@@ -583,6 +581,7 @@ var ChatComponent = /** @class */ (function () {
         this.userSubscription = this.msgService.getUsers()
             .subscribe(function (users) {
             _this.users = users;
+            _this.user_id = _this.msgService.getActiveUserId();
             _this.users = _this.users.filter(function (userEl) { return userEl['id'] !== _this.user_id; }); // removing active user
             console.log('getting users from subscribtion', _this.users);
             console.log('active user is: ', _this.user_id);
@@ -596,7 +595,6 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.onSend = function () {
         var _this = this;
         var newMessage = new _shared_message_model__WEBPACK_IMPORTED_MODULE_1__["Message"](0, this.user_id, this.receiver_id, this.messageForm.value.message, new Date().toString());
-        // this.messages.push(newMessage);
         // this.conversation.push(newMessage);
         this.msgSubscription = this.msgService.saveMessage({
             user_id: this.user_id,
@@ -612,26 +610,12 @@ var ChatComponent = /** @class */ (function () {
     // Update chat log depending on whom is selected
     ChatComponent.prototype.updateConversation = function () {
         var _this = this;
-        // Decide page nr
-        // Ex. this.conversation.length = 21 => page_nr = 2
-        var page_nr = Math.floor(this.conversation.length / this.trigger_next_page) + 1;
-        // console.log('Current page: ' , this.current_page_nr, '--',this.conversation.length, ' / ', this.trigger_next_page, ' = ', page_nr);
-        console.log(page_nr, "current", this.current_page_nr);
-        if (page_nr > this.current_page_nr) {
-            this.current_page_nr = page_nr;
-            this.convSubscription = this.msgService.getConversation(this.receiver_id, this.current_page_nr)
-                .subscribe(function (conversationData) {
-                // this.conversation = <Message[]>conversationData;
-                // this.conversation.concat(<Message[]>conversationData);
-                var new_page_messages = conversationData;
-                console.log('pushing new messages - size(): ', new_page_messages.length);
-                for (var index = 0; index < new_page_messages.length; index++) {
-                    _this.conversation.push(new_page_messages[index]);
-                }
-                _this.scrollChatDown();
-                // this.conversation.concat(<Message[]>conversationData);
-            });
-        }
+        console.log('UPDATECONVERSATION! converation length is:', this.conversation.length);
+        this.convSubscription = this.msgService.getConversation(this.receiver_id, this.current_page_nr)
+            .subscribe(function (conversationData) {
+            _this.conversation = conversationData;
+            _this.scrollChatDown();
+        });
     };
     // Helper function to scroll down after new message
     ChatComponent.prototype.scrollChatDown = function () {
@@ -645,7 +629,6 @@ var ChatComponent = /** @class */ (function () {
         var selectedUsers = this.users.find(function (user) { return user['id'] === _this.receiver_id; });
         console.log(selectedUsers);
         this.receiver_name = selectedUsers['name'];
-        this.current_page_nr = 0;
         this.conversation = [];
         this.updateConversation();
     };
@@ -667,6 +650,7 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.ngOnDestroy = function () {
         this.userSubscription.unsubscribe();
         this.convSubscription.unsubscribe();
+        this.msgSubscription.unsubscribe();
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('f'),
