@@ -616,7 +616,7 @@ var ChatComponent = /** @class */ (function () {
         // Ex. this.conversation.length = 21 => page_nr = 2
         var page_nr = Math.floor(this.conversation.length / this.trigger_next_page) + 1;
         // console.log('Current page: ' , this.current_page_nr, '--',this.conversation.length, ' / ', this.trigger_next_page, ' = ', page_nr);
-        // console.log(page_nr, "current" , this.current_page_nr);
+        console.log(page_nr, "current", this.current_page_nr);
         if (page_nr > this.current_page_nr) {
             this.current_page_nr = page_nr;
             this.convSubscription = this.msgService.getConversation(this.receiver_id, this.current_page_nr)
