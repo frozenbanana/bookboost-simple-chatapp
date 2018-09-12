@@ -612,7 +612,10 @@ var ChatComponent = /** @class */ (function () {
         var _this = this;
         this.convSubscription = this.msgService.getConversation(this.receiver_id)
             .subscribe(function (conversationData) {
-            _this.conversation = conversationData;
+            var updatedConversation = conversationData;
+            if (updatedConversation.length > _this.conversation.length) {
+                _this.conversation = conversationData;
+            }
         });
     };
     // Helper function to scroll down after new message
