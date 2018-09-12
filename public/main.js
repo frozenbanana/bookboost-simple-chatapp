@@ -567,6 +567,8 @@ var ChatComponent = /** @class */ (function () {
         this.user_name = 'Me';
         this.receiver_id = 0;
         this.receiver_name = '';
+        this.current_page_nr = -1;
+        this.trigger_next_page = 19;
     }
     ChatComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -610,11 +612,26 @@ var ChatComponent = /** @class */ (function () {
     // Update chat log depending on whom is selected
     ChatComponent.prototype.updateConversation = function () {
         var _this = this;
-        this.convSubscription = this.msgService.getConversation(this.receiver_id)
-            .subscribe(function (conversationData) {
-            // const updatedConversation: Message[] = <Message[]>conversationData;
-            _this.conversation = conversationData;
-        });
+        // Decide page nr
+        // Ex. this.conversation.length = 21 => page_nr = 2
+        var page_nr = Math.floor(this.conversation.length / this.trigger_next_page) + 1;
+        // console.log('Current page: ' , this.current_page_nr, '--',this.conversation.length, ' / ', this.trigger_next_page, ' = ', page_nr);
+        // console.log(page_nr, "current" , this.current_page_nr);
+        if (page_nr > this.current_page_nr) {
+            this.current_page_nr = page_nr;
+            this.convSubscription = this.msgService.getConversation(this.receiver_id, this.current_page_nr)
+                .subscribe(function (conversationData) {
+                // this.conversation = <Message[]>conversationData;
+                // this.conversation.concat(<Message[]>conversationData);
+                var new_page_messages = conversationData;
+                console.log('pushing new messages - size(): ', new_page_messages.length);
+                for (var index = 0; index < new_page_messages.length; index++) {
+                    _this.conversation.push(new_page_messages[index]);
+                }
+                _this.scrollChatDown();
+                // this.conversation.concat(<Message[]>conversationData);
+            });
+        }
     };
     // Helper function to scroll down after new message
     ChatComponent.prototype.scrollChatDown = function () {
@@ -628,6 +645,8 @@ var ChatComponent = /** @class */ (function () {
         var selectedUsers = this.users.find(function (user) { return user['id'] === _this.receiver_id; });
         console.log(selectedUsers);
         this.receiver_name = selectedUsers['name'];
+        this.current_page_nr = 0;
+        this.conversation = [];
         this.updateConversation();
     };
     // Logout
@@ -648,7 +667,6 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.ngOnDestroy = function () {
         this.userSubscription.unsubscribe();
         this.convSubscription.unsubscribe();
-        this.msgSubscription.unsubscribe();
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('f'),
@@ -721,23 +739,24 @@ var MessageService = /** @class */ (function () {
             return response.json().data.messages;
         }));
     };
-    MessageService.prototype.getConversation = function (receiver_id) {
-        // console.log(this.activeUserId);
-        // console.log(receiver_id);
+    // This function give the first or last page. Needs rework to be fully functional
+    MessageService.prototype.getConversation = function (receiver_id, page_nr) {
         var conversationUrl = this.apiUrl + "/messages/";
         conversationUrl += "from/" + this.activeUserId + "/";
         conversationUrl += "to/" + receiver_id;
-        conversationUrl += "?token=" + this.token;
+        conversationUrl += "?page=" + page_nr;
+        conversationUrl += "&token=" + this.token;
         return this.http.get(conversationUrl)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
             console.log(response.json());
+            var data = response.json();
             return response.json().conversation.data;
         }));
     };
     MessageService.prototype.saveMessage = function (body) {
         var headers = new _angular_http__WEBPACK_IMPORTED_MODULE_0__["Headers"]({ 'Content-Type': 'application/x-www-form-urlencoded' });
         var options = new _angular_http__WEBPACK_IMPORTED_MODULE_0__["RequestOptions"]({ headers: headers });
-        var params = " &user_id=" + body.user_id + "\n                                        &receiver_id=" + body.receiver_id + "\n                                        &content=" + body.content;
+        var params = "&user_id=" + body.user_id + "\n                                        &receiver_id=" + body.receiver_id + "\n                                        &content=" + body.content;
         return this.http.post(this.apiUrl + "/messages?token=" + this.token, params, options).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
             var data = response.json();
             return data;
