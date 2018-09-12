@@ -267,6 +267,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/http */ "./node_modules/@angular/http/fesm5/http.js");
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -280,11 +281,13 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var AuthService = /** @class */ (function () {
     function AuthService(router, http) {
         this.router = router;
         this.http = http;
         this.hasLoggedIn = false;
+        this.wrongCredentials = false;
         this.apiUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api';
         this.usersUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api/users';
         this.authUrl = 'https://simple-chat-app-bookboost.herokuapp.com/api/authenticate';
@@ -324,6 +327,9 @@ var AuthService = /** @class */ (function () {
         return this.http.post(this.authUrl, params, { headers: headers }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (response) {
             var data = response.json();
             return data;
+        }))
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["catchError"])(function (error) {
+            return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["throwError"])(error);
         }));
     };
     AuthService.prototype.signinUser = function (email, password) {
@@ -335,6 +341,10 @@ var AuthService = /** @class */ (function () {
             console.log('comming straight from the api: ', _this.activeUserId);
             _this.hasLoggedIn = true;
             _this.router.navigate(['/chat']);
+        }, function (error) {
+            console.log('FROM signinUser - Error:', error);
+            _this.hasLoggedIn = false;
+            _this.wrongCredentials = true;
         });
     };
     AuthService.prototype.logout = function () {
@@ -346,6 +356,9 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.isAuthenticated = function () {
         return this.hasLoggedIn;
+    };
+    AuthService.prototype.hasWrongCredentials = function () {
+        return this.wrongCredentials;
     };
     AuthService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])(),
@@ -377,7 +390,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Login</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignin(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"email\"\n                id=\"email\"\n                name=\"email\"\n                ngModel class=\"form-control\"\n                placeholder=\"Email\"\n                email\n                required\n                #email=\"ngModel\">\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                Please enter a valid email!\n            </span>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\"\n                id=\"password\"\n                name=\"password\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Password\"\n                required>\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"hasWrongCredentials()\">\n                Oops, wrong credentials!\n            </span>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"f.form.invalid\">Sign In</button>\n                <small class=\"float-right\">Or click <a  class=\"text-right\" [routerLink]=\"['/signup']\">here </a> to register</small>\n            </div>\n        </div>\n    </form>\n</div>"
+module.exports = "<div class=\"col-md-12 col-md-offset-6\" id=\"content\">\n    <h3 id=\"title\">Login</h3>\n    <hr>\n    <form class=\"form-horizontal\" (ngSubmit)=\"onSignin(f)\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"email\">Email</label>\n            <div class=\"col-sm-12\">\n                <input\n                type=\"email\"\n                id=\"email\"\n                name=\"email\"\n                ngModel class=\"form-control\"\n                placeholder=\"Email\"\n                email\n                required\n                #email=\"ngModel\">\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"!email.valid && email.touched\">\n                Please enter a valid email!\n            </span>\n        </div>\n        <div class=\"form-group\">\n            <label class=\"col-sm-3 control-label\" for=\"password\">Password</label>\n            <div class=\"col-sm-12\">\n                <input type=\"password\"\n                id=\"password\"\n                name=\"password\"\n                ngModel\n                class=\"form-control\"\n                placeholder=\"Password\"\n                required>\n            </div>\n            <span class=\"col-sm-3 help-block\" *ngIf=\"authService.hasWrongCredentials()\">\n                Oops, wrong credentials!\n            </span>\n        </div>\n        <div class=\"form-group last\">\n            <div class=\"col-sm-offset-3 col-sm-9\">\n                <button class=\"btn btn-primary\" type=\"submit\" [disabled]=\"f.form.invalid\">Sign In</button>\n                <small class=\"float-right\">Or click <a  class=\"text-right\" [routerLink]=\"['/signup']\">here </a> to register</small>\n            </div>\n        </div>\n    </form>\n</div>"
 
 /***/ }),
 
@@ -415,9 +428,6 @@ var SigninComponent = /** @class */ (function () {
         var password = form.value.password;
         this.authService.signinUser(email, password);
         console.log('Passed email and password to Auth.Service');
-    };
-    SigninComponent.prototype.hasWrongCredentials = function () {
-        return false; // TODO
     };
     SigninComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -524,7 +534,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"container\"> -->\n<div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n    <div class=\"row\">\n        <h3 id=\"title\">Chat</h3>\n        <div class=\"col-md-2 float-right\">\n            <button class=\"btn btn-danger logout\" (click)=\"onLogout()\">Log Out</button>\n        </div>\n    </div>\n    <hr>\n    <select #receiverSelect (change)=\"onSelectChange($event)\" ([ngModel])=\"reciever_id\" name=\"reciever\" class=\"form-control\">\n        <option *ngFor=\"let user of users\" value=\"{{user.id}}\">{{ user.name }} ({{user.email}})</option>\n    </select>\n    <br>\n    <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n        <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n            <div class=\"row messages\" [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\" *ngFor=\"let message of conversation\">\n                <p> {{ message.content }} <br> <span class=\"timestamp\">Sent: {{message.created_at}} by {{decideSender(message.user_id)}}</span></p>\n            </div>\n        </div>\n    </div>\n    <br>\n    <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <div class=\"row\">\n                <div class=\"col-md-9\">\n                    <input type=\"text\" class=\"form-control\" name=\"message\" ngModel [value]=\"message\" required>\n                </div>\n                <div class=\"col-md-3 float-right\">\n                    <button class=\"btn btn-primary float-center\" type=\"submit\">Send</button>\n                </div>\n            </div>\n        </div>\n    </form>\n</div>\n<!-- </div> -->"
+module.exports = "<!-- <div class=\"container\"> -->\n<div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n    <div class=\"row\">\n        <h3 id=\"title\">Chat</h3>\n        <div class=\"col-md-2 float-right\">\n            <button class=\"btn btn-danger logout\" (click)=\"onLogout()\">Log Out</button>\n        </div>\n    </div>\n    <hr>\n    <select #receiverSelect (change)=\"onSelectChange($event)\" ([ngModel])=\"reciever_id\" name=\"reciever\" class=\"form-control\">\n        <option *ngFor=\"let user of users\" value=\"{{user.id}}\">{{ user.name }} ({{user.email}})</option>\n    </select>\n    <br>\n    <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n        <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n            <div class=\"row messages\" [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\" *ngFor=\"let message of conversation\">\n                <p> {{ message.content }} <br> <span class=\"timestamp\">Sent: {{message.created_at}} by {{decideSender(message.user_id)}}</span></p>\n            </div>\n        </div>\n    </div>\n    <br>\n    <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <div class=\"row\">\n                <div class=\"col-md-9\">\n                    <input type=\"text\" class=\"form-control\" name=\"message\" ngModel [value]=\"message\" required>\n                </div>\n                <div class=\"col-md-3 float-right\">\n                    <button class=\"btn btn-primary float-center\" type=\"submit\" [disabled]=\"f.form.invalid\">Send</button>\n                </div>\n            </div>\n        </div>\n    </form>\n</div>\n<!-- </div> -->"
 
 /***/ }),
 
@@ -610,7 +620,6 @@ var ChatComponent = /** @class */ (function () {
     // Update chat log depending on whom is selected
     ChatComponent.prototype.updateConversation = function () {
         var _this = this;
-        console.log('UPDATECONVERSATION! converation length is:', this.conversation.length);
         this.convSubscription = this.msgService.getConversation(this.receiver_id, this.current_page_nr)
             .subscribe(function (conversationData) {
             _this.conversation = conversationData;
@@ -630,6 +639,7 @@ var ChatComponent = /** @class */ (function () {
         console.log(selectedUsers);
         this.receiver_name = selectedUsers['name'];
         this.conversation = [];
+        this.msgSubscription.unsubscribe();
         this.updateConversation();
     };
     // Logout
@@ -650,7 +660,6 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.ngOnDestroy = function () {
         this.userSubscription.unsubscribe();
         this.convSubscription.unsubscribe();
-        this.msgSubscription.unsubscribe();
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('f'),
