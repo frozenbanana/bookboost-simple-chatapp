@@ -10,9 +10,11 @@
 | contains the "web" middleware group. Now create something great!
 |
  */
+View::addExtension('html', 'php');
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return View::make('index');
 });
 
 Route::group(['middleware' => 'cors', 'prefix' => 'api'], function () {
