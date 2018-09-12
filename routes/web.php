@@ -14,7 +14,8 @@ View::addExtension('html', 'php');
 
 Route::get('/', function () {
     // return view('welcome');
-    return View::make('index');
+    // return View::make('index');
+    return File::get(public_path() , '/index.html');
 });
 
 Route::group(['middleware' => 'cors', 'prefix' => 'api'], function () {
