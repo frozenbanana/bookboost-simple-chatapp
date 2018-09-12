@@ -15,7 +15,7 @@
 Route::get('/', function () {
     // return view('welcome');
     // return View::make('index');
-    return File::get(base_path(), '-public/index.html');
+    return File::get(base_path(), '/public/index.html');
 });
 
 Route::group(['middleware' => 'cors', 'prefix' => 'api'], function () {
