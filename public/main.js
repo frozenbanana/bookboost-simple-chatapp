@@ -595,8 +595,8 @@ var ChatComponent = /** @class */ (function () {
         var _this = this;
         var newMessage = new _shared_message_model__WEBPACK_IMPORTED_MODULE_1__["Message"](0, this.user_id, this.receiver_id, this.messageForm.value.message, new Date().toString());
         // this.messages.push(newMessage);
-        this.conversation.push(newMessage);
-        this.msgService.saveMessage({
+        // this.conversation.push(newMessage);
+        this.msgSubscription = this.msgService.saveMessage({
             user_id: this.user_id,
             receiver_id: this.receiver_id,
             content: newMessage.content
@@ -612,10 +612,8 @@ var ChatComponent = /** @class */ (function () {
         var _this = this;
         this.convSubscription = this.msgService.getConversation(this.receiver_id)
             .subscribe(function (conversationData) {
-            var updatedConversation = conversationData;
-            if (updatedConversation.length > _this.conversation.length) {
-                _this.conversation = conversationData;
-            }
+            // const updatedConversation: Message[] = <Message[]>conversationData;
+            _this.conversation = conversationData;
         });
     };
     // Helper function to scroll down after new message
@@ -650,6 +648,7 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.ngOnDestroy = function () {
         this.userSubscription.unsubscribe();
         this.convSubscription.unsubscribe();
+        this.msgSubscription.unsubscribe();
     };
     __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ViewChild"])('f'),
@@ -731,7 +730,7 @@ var MessageService = /** @class */ (function () {
         conversationUrl += "?token=" + this.token;
         return this.http.get(conversationUrl)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
-            console.log(response.json().conversation.data);
+            console.log(response.json());
             return response.json().conversation.data;
         }));
     };

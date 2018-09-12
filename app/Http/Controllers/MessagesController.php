@@ -188,7 +188,7 @@ class MessagesController extends Controller
                             ->orWhere('user_id', $receiver_id);            //  get all messages  TO active reciever;
             })
              ->select('id', 'content', 'user_id', 'receiver_id', 'created_at')
-             ->orderBy('created_at', 'asc')->paginate(20);
+             ->orderBy('created_at', 'asc')->paginate(20)->getLastPage();
 
         return Response()->json([
             'message' => 'Conversation created succesfully',
