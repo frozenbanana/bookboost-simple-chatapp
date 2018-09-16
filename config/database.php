@@ -1,11 +1,11 @@
 <?php
 
-// $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-// $host = $url["host"];
-// $username = $url["user"];
-// $password = $url["pass"];
-// $database = substr($url["path"], 1);
+$host = $url["host"];
+$username = $url["user"];
+$password = $url["pass"];
+$database = substr($url["path"], 1);
 
 return [
 
@@ -49,14 +49,14 @@ return [
         'mysql' => [
             'driver' => 'mysql',
 
-            'host'      => env('DB_HOST', 'localhost'),
-            'database'  => env('DB_DATABASE', 'chat_backend_db'),
-            'username'  => env('DB_USERNAME', 'root'),
-            'password'  => env('DB_PASSWORD', 'password'),
-            // 'host' => env('DB_HOST', '127.0.0.1') , //$host,
-            // 'database' => env('DB_PORT'),               // $database,
-            // 'username' => env('DB_USERNAME'),   // $username,
-            // 'password' => env('DB_PASSWORD'),   // $password,
+            // 'host'      => env('DB_HOST', 'localhost'),
+            // 'database'  => env('DB_DATABASE', 'chat_backend_db'),
+            // 'username'  => env('DB_USERNAME', 'root'),
+            // 'password'  => env('DB_PASSWORD', 'password'),
+            'host' => env('DB_HOST', '127.0.0.1') , //$host,
+            'database' => env('DB_PORT'),               // $database,
+            'username' => env('DB_USERNAME'),   // $username,
+            'password' => env('DB_PASSWORD'),   // $password,
             'port' => env('DB_PORT', '3306'),
 
             'unix_socket' => env('DB_SOCKET', ''),
