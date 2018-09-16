@@ -1,12 +1,11 @@
 <?php
 
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+// $url = parse_url(getenv("CLEARDB_DATABASE_URL"));
 
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$database = substr($url["path"], 1);
-
+// $host = $url["host"];
+// $username = $url["user"];
+// $password = $url["pass"];
+// $database = substr($url["path"], 1);
 
 return [
 
@@ -19,7 +18,7 @@ return [
     | to use as your default connection for all database work. Of course
     | you may use many connections at once using the Database library.
     |
-    */
+     */
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
@@ -37,7 +36,7 @@ return [
     | so make sure you have the driver for your particular database of
     | choice installed on your machine before you begin development.
     |
-    */
+     */
 
     'connections' => [
 
@@ -49,10 +48,15 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-    'host'      => $host,
-        'database'  => $database,
-        'username'  => $username,
-        'password'  => $password,
+
+            'host'      => env('DB_HOST', 'localhost'),
+            'database'  => env('DB_DATABASE', 'chat_backend_db'),
+            'username'  => env('DB_USERNAME', 'root'),
+            'password'  => env('DB_PASSWORD', 'password'),
+            // 'host' => env('DB_HOST', '127.0.0.1') , //$host,
+            // 'database' => env('DB_PORT'),               // $database,
+            // 'username' => env('DB_USERNAME'),   // $username,
+            // 'password' => env('DB_PASSWORD'),   // $password,
             'port' => env('DB_PORT', '3306'),
 
             'unix_socket' => env('DB_SOCKET', ''),
@@ -98,7 +102,7 @@ return [
     | your application. Using this information, we can determine which of
     | the migrations on disk haven't actually been run in the database.
     |
-    */
+     */
 
     'migrations' => 'migrations',
 
@@ -111,7 +115,7 @@ return [
     | provides a richer set of commands than a typical key-value systems
     | such as APC or Memcached. Laravel makes it easy to dig right in.
     |
-    */
+     */
 
     'redis' => [
 

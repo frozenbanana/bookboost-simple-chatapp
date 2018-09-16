@@ -10,11 +10,8 @@
 | contains the "web" middleware group. Now create something great!
 |
  */
-// View::addExtension('html', 'php');
 
 Route::get('/', function () {
-    // return view('welcome');
-    // return View::make('index');
     return File::get(base_path() . '/public/index.html');
 });
 

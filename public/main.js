@@ -338,11 +338,9 @@ var AuthService = /** @class */ (function () {
         this.getToken(signinBody).subscribe(function (user) {
             _this.token = user['token'];
             _this.activeUserId = user['id'];
-            console.log('comming straight from the api: ', _this.activeUserId);
             _this.hasLoggedIn = true;
             _this.router.navigate(['/chat']);
         }, function (error) {
-            console.log('FROM signinUser - Error:', error);
             _this.hasLoggedIn = false;
             _this.wrongCredentials = true;
         });
@@ -534,7 +532,7 @@ module.exports = "#content {\n    width: 400px;\n    margin: 0 auto;\n    backgr
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!-- <div class=\"container\"> -->\n<div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n    <div class=\"row\">\n        <h3 id=\"title\">Chat</h3>\n        <div class=\"col-md-2 float-right\">\n            <button class=\"btn btn-danger logout\" (click)=\"onLogout()\">Log Out</button>\n        </div>\n    </div>\n    <hr>\n    <select #receiverSelect (change)=\"onSelectChange($event)\" ([ngModel])=\"reciever_id\" name=\"reciever\" class=\"form-control\">\n        <option *ngFor=\"let user of users\" value=\"{{user.id}}\">{{ user.name }} ({{user.email}})</option>\n    </select>\n    <br>\n    <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n        <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n            <div class=\"row messages\" [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\" *ngFor=\"let message of conversation\">\n                <p> {{ message.content }} <br> <span class=\"timestamp\">Sent: {{message.created_at}} by {{decideSender(message.user_id)}}</span></p>\n            </div>\n        </div>\n    </div>\n    <br>\n    <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n        <div class=\"form-group\">\n            <div class=\"row\">\n                <div class=\"col-md-9\">\n                    <input type=\"text\" class=\"form-control\" name=\"message\" ngModel [value]=\"message\" required>\n                </div>\n                <div class=\"col-md-3 float-right\">\n                    <button class=\"btn btn-primary float-center\" type=\"submit\" [disabled]=\"f.form.invalid\">Send</button>\n                </div>\n            </div>\n        </div>\n    </form>\n</div>\n<!-- </div> -->"
+module.exports = "<div class=\"container\">\n    <div id=\"content\" class=\"col-md-12 col-md-offset-6\">\n        <div class=\"row\">\n            <h3 id=\"title\">Chat</h3>\n            <div class=\"col-md-2 float-right\">\n                <button class=\"btn btn-danger logout\" (click)=\"onLogout()\">Log Out</button>\n            </div>\n        </div>\n        <hr>\n        <select #receiverSelect (change)=\"onSelectChange($event)\" ([ngModel])=\"reciever_id\" name=\"reciever\" class=\"form-control\">\n            <option *ngFor=\"let user of users\" value=\"{{user.id}}\">{{ user.name }} ({{user.email}})</option>\n        </select>\n        <br>\n        <div #chatlog id=\"chatlog\" (change)=\"onScroll($event)\" class=\"pre-scrollable well well-sm\">\n            <div class=\"col-md-12\" style=\"padding-left: 30px;\">\n                <div class=\"row messages\" [ngClass]=\"message.user_id === user_id ? 'msg_sent' : 'msg_recieve'\" *ngFor=\"let message of conversation\">\n                    <p> {{ message.content }} <br> <span class=\"timestamp\">Sent: {{message.created_at}} by\n                            {{decideSender(message.user_id)}}</span></p>\n                </div>\n            </div>\n        </div>\n        <br>\n        <form (ngSubmit)=\"onSend()\" #f=\"ngForm\">\n            <div class=\"form-group\">\n                <div class=\"row\">\n                    <div class=\"col-md-9\">\n                        <input type=\"text\" class=\"form-control\" name=\"message\" ngModel [value]=\"message\" required>\n                    </div>\n                    <div class=\"col-md-3 float-right\">\n                        <button class=\"btn btn-primary float-center\" type=\"submit\" [disabled]=\"f.form.invalid\">Send</button>\n                    </div>\n                </div>\n            </div>\n        </form>\n    </div>\n</div>"
 
 /***/ }),
 
@@ -593,9 +591,10 @@ var ChatComponent = /** @class */ (function () {
             _this.users = users;
             _this.user_id = _this.msgService.getActiveUserId();
             _this.users = _this.users.filter(function (userEl) { return userEl['id'] !== _this.user_id; }); // removing active user
-            console.log('getting users from subscribtion', _this.users);
-            console.log('active user is: ', _this.user_id);
-            _this.receiver_id = _this.users[0]['id'];
+            console.log('Getting users from subscription', _this.users);
+            console.log('Active user is: ', _this.user_id);
+            _this.receiver_id = _this.users[0]['id']; // first user in list is default
+            _this.receiver_name = _this.users[0]['name'];
             _this.updateConversation();
         }, function (error) {
             console.log(error);
@@ -605,7 +604,6 @@ var ChatComponent = /** @class */ (function () {
     ChatComponent.prototype.onSend = function () {
         var _this = this;
         var newMessage = new _shared_message_model__WEBPACK_IMPORTED_MODULE_1__["Message"](0, this.user_id, this.receiver_id, this.messageForm.value.message, new Date().toString());
-        // this.conversation.push(newMessage);
         this.msgSubscription = this.msgService.saveMessage({
             user_id: this.user_id,
             receiver_id: this.receiver_id,
@@ -716,7 +714,6 @@ var MessageService = /** @class */ (function () {
         this.apiUrl = this.authService.getApiUrl();
         this.token = this.authService.getActiveToken();
         this.activeUserId = this.authService.getActiveUserId();
-        console.log(this.activeUserId);
         console.log('MessageService has been created with api url: ', this.apiUrl);
     }
     MessageService.prototype.setActiveUserId = function (id) {
@@ -732,7 +729,7 @@ var MessageService = /** @class */ (function () {
             return response.json().data.messages;
         }));
     };
-    // This function give the first or last page. Needs rework to be fully functional
+    // This function give the first page. Needs rework to be fully functional
     MessageService.prototype.getConversation = function (receiver_id, page_nr) {
         var conversationUrl = this.apiUrl + "/messages/";
         conversationUrl += "from/" + this.activeUserId + "/";
@@ -742,7 +739,6 @@ var MessageService = /** @class */ (function () {
         return this.http.get(conversationUrl)
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
             console.log(response.json());
-            var data = response.json();
             return response.json().conversation.data;
         }));
     };
