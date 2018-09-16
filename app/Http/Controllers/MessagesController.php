@@ -27,11 +27,7 @@ class MessagesController extends Controller
         // check for page limit otherwise page limit = 5
         $pageLimit = $request->input('limit') ? $request->input('limit'):5;
 
-        $messages = Message::with(
-                ['User' => function($query) {
-                    $query->select('id', 'name');   // query selects from User table id and name
-                }]
-                )->select('id', 'content', 'user_id', 'receiver_id')->paginate($pageLimit); // then selects from Message table id, content, ...
+        $messages = Message::paginate($pageLimit);
 
         return response()->json([
             'data' => (new Message)->transformCollection($messages),
@@ -83,12 +79,7 @@ class MessagesController extends Controller
      */
     public function show($id)
     {
-        // $message = Message::find($id);
-        $message = Message::with(
-            ['User' => function ($query) {
-                $query->select('id', 'name');
-            }]
-        )->find($id);
+        $message = Message::find($id);
 
         if (!$message) {
             return response()->json([
