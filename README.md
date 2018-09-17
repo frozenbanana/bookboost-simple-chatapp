@@ -15,7 +15,7 @@ A running demo can be found at: https://simple-chat-app-bookboost.herokuapp.com/
 # About backend
 The backend is written with the [Laravel Framework 5.7.2](https://laravel.com/).
 
-The rouute list is as follows:
+The route list is as follows:
 ```
 +--------+-----------+----------------------------------------------+--------------------+------------------------------------------------------------------+-------------------+
 | Domain | Method    | URI                                          | Name               | Action                                                           | Middleware        |
