@@ -16,7 +16,7 @@ A running demo can be found at: https://simple-chat-app-bookboost.herokuapp.com/
 The backend is written with the [Laravel Framework 5.7.2](https://laravel.com/).
 
 The rouute list is as follows:
-
+```
 +--------+-----------+----------------------------------------------+--------------------+------------------------------------------------------------------+-------------------+
 | Domain | Method    | URI                                          | Name               | Action                                                           | Middleware        |
 +--------+-----------+----------------------------------------------+--------------------+------------------------------------------------------------------+-------------------+
@@ -41,14 +41,14 @@ The rouute list is as follows:
 |        | DELETE    | api/users/{user}                             | users.destroy      | App\Http\Controllers\UsersController@destroy                     | web,cors          |
 |        | GET|HEAD  | api/users/{user}/edit                        | users.edit         | App\Http\Controllers\UsersController@edit                        | web,cors          |
 +--------+-----------+----------------------------------------------+--------------------+------------------------------------------------------------------+-------------------+
-
+```
 The main route that is used for message service is `api/messages/from/{user_id}/to/{reciever_id}` to get a conversation between two users.
 
 # About frontend
 The frontend is written in [Angular 6.1.5](https://angular.io/)
 The app overview is as follows:
 
-![Generated with compodoc](https://imgur.com/0NbxrRR)
+![Generated with compodoc](https://i.imgur.com/0NbxrRR.png)
 
 # Known issues
 - To get new messages the frontend is requesting the api every 4000ms. It makes the chat feel unresponsive.
