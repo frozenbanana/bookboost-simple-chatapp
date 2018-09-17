@@ -45,11 +45,12 @@ The rouute list is as follows:
 The main route that is used for message service is `api/messages/from/{user_id}/to/{reciever_id}` to get a conversation between two users.
 
 # About frontend
-The frontend is written in [Angular 6.1.5](https://angular.io/)
+The frontend is written in [Angular 6.1.5](https://angular.io/).
 The app overview is as follows:
 
 ![Generated with compodoc](https://i.imgur.com/0NbxrRR.png)
 
+*Image generated with compodoc*
 # Known issues
 - To get new messages the frontend is requesting the api every 4000ms. It makes the chat feel unresponsive.
 - The auto scrolling is also timed to the conversation update. That means the conversation is forced to scroll down every 4000 ms.
